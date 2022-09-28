@@ -67,24 +67,31 @@ type allFiles struct {
 	fullInfo bool
 }
 
-// print func for allFiles struct
-func (f allFiles) String() string {
-	if !f.fullInfo {
-
-		a := ""
-		for _, l := range f.files {
-			a += fmt.Sprintf("%s\n", l)
-		}
-
-		return a
+func (f allFiles) getInfo() string {
+	a := ""
+	for _, l := range f.files {
+		a += fmt.Sprintf("%s\n", l)
 	}
 
+	return a
+}
+
+func (f allFiles) getFullInfo() string {
 	a := ""
 	for _, l := range f.files {
 		a += l.FullPrint(f.fullInfo) + "\n"
 	}
 
 	return a
+}
+
+// print func for allFiles struct
+func (f allFiles) String() string {
+	if !f.fullInfo {
+		return f.getInfo()
+	}
+
+	return f.getFullInfo()
 }
 
 func Programm(files []string, flag *flags.Flag) {
