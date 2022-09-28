@@ -45,13 +45,13 @@ func (f fileInfo) SimplePrint() string {
 func (f fileInfo) GetName(fullInfo bool) string {
 	if f.isLink {
 		if fullInfo {
-			return fmt.Sprintf("%s %s %s -> %s %s %s", utils.Link, f.name, utils.Reset, utils.Dir, f.link, utils.Reset)
+			return fmt.Sprintf("%s%s%s -> %s%s%s", utils.Link, f.name, utils.Reset, utils.Dir, f.link, utils.Reset)
 		}
-		return fmt.Sprintf("%s %s %s", utils.Link, f.name, utils.Reset)
+		return fmt.Sprintf("%s%s%s", utils.Link, f.name, utils.Reset)
 	}
 
 	if f.isDir {
-		return fmt.Sprintf("%s %s %s", utils.Dir, f.name, utils.Reset)
+		return fmt.Sprintf("%s%s%s", utils.Dir, f.name, utils.Reset)
 	}
 
 	return f.name
@@ -70,7 +70,13 @@ type allFiles struct {
 // print func for allFiles struct
 func (f allFiles) String() string {
 	if !f.fullInfo {
-		return fmt.Sprintf("%s\n", f.files)
+
+		a := ""
+		for _, l := range f.files {
+			a += fmt.Sprintf("%s\n", l)
+		}
+
+		return a
 	}
 
 	a := ""
