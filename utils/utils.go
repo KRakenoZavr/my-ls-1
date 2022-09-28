@@ -2,7 +2,10 @@ package utils
 
 import (
 	"io/fs"
+	"log"
+	"os"
 	"os/user"
+	"sort"
 	"strconv"
 	"strings"
 	"syscall"
@@ -46,4 +49,41 @@ func GetOwnerFile(file fs.FileInfo) (OwnerGroup string, OwnerName string, err er
 	}
 
 	return group.Name, usr.Username, err
+}
+
+func SortFiles(args []string) []string {
+	dirs := make([]string, 0)
+	files := make([]string, 0)
+
+	for _, l := range args {
+		f, err := os.Open(l)
+		if err != nil {
+			log.Println(err)
+			continue
+		}
+		defer f.Close()
+		// check if dir
+		fInfo, err := f.Stat()
+		if err != nil {
+			log.Println(err)
+			continue
+		}
+
+		// if not dir, then run lsprog
+		if !fInfo.IsDir() {
+			files = append(files, l)
+		} else {
+			dirs = append(dirs, l)
+		}
+	}
+
+	sort.SliceStable(files, func(i, j int) bool {
+		return files[i] < files[j]
+	})
+
+	sort.SliceStable(dirs, func(i, j int) bool {
+		return dirs[i] < dirs[j]
+	})
+
+	return append(files, dirs...)
 }
