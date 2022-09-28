@@ -67,7 +67,7 @@ type allFiles struct {
 // print func for allFiles struct
 func (f allFiles) String() string {
 	if !f.fullInfo {
-		return fmt.Sprintf("%s", f.files)
+		return fmt.Sprintf("%s\n", f.files)
 	}
 
 	a := ""
@@ -175,6 +175,6 @@ func lsprog(files []fs.FileInfo, flag *flags.Flag) {
 		ReverseArray(fileInfos.files)
 	}
 
-	fmt.Println(fileInfos)
+	fmt.Print(fileInfos)
 	// R - recurse
 }
