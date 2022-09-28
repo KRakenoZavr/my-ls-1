@@ -82,12 +82,12 @@ func Programm(files []string, flag *flags.Flag) {
 func run(path string, flag *flags.Flag) {
 	f, err := os.Open(path)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return
 	}
 	fInfo, err := f.Stat()
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return
 	}
 	if !fInfo.IsDir() {
@@ -97,7 +97,7 @@ func run(path string, flag *flags.Flag) {
 
 	files, err := f.Readdir(0)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return
 	}
 
