@@ -34,25 +34,23 @@ type fileInfo struct {
 }
 
 func (f fileInfo) String() string {
-	return fmt.Sprintf("%s", f.name)
-}
-
-func (f fileInfo) SimplePrint() string {
-	return fmt.Sprintf("%s", f.name)
-}
-
-func (f fileInfo) GetName() string {
-	if f.isDir {
-		return fmt.Sprintf("%s %s %s", utils.Dir, f.name, utils.Reset)
-	}
 	return f.name
 }
 
-func (f fileInfo) GetLink() string {
+func (f fileInfo) SimplePrint() string {
+	return f.name
+}
+
+func (f fileInfo) GetName() string {
 	if f.isLink {
-		return fmt.Sprintf("%s %s %s ->", utils.Link, f.link, utils.Reset)
+		return fmt.Sprintf("%s %s %s -> %s %s %s", utils.Link, f.name, utils.Reset, utils.Dir, f.link, utils.Reset)
 	}
-	return ""
+
+	if f.isDir {
+		return fmt.Sprintf("%s %s %s", utils.Dir, f.name, utils.Reset)
+	}
+
+	return f.name
 }
 
 func (f fileInfo) FullPrint() string {
