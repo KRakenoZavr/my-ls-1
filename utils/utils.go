@@ -19,6 +19,11 @@ func GetArgs(args []string) (flags []string, files []string) {
 		}
 	}
 
+	// if no args, then ls current dir
+	if len(files) == 0 {
+		files = append(files, ".")
+	}
+
 	return
 }
 
