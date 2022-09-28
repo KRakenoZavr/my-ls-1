@@ -41,6 +41,7 @@ func (f fileInfo) SimplePrint() string {
 	return f.name
 }
 
+// for print file name and link
 func (f fileInfo) GetName() string {
 	if f.isLink {
 		return fmt.Sprintf("%s %s %s -> %s %s %s", utils.Link, f.name, utils.Reset, utils.Dir, f.link, utils.Reset)
@@ -53,6 +54,7 @@ func (f fileInfo) GetName() string {
 	return f.name
 }
 
+// print all info of file
 func (f fileInfo) FullPrint() string {
 	return fmt.Sprintf("%s %v %s %s", f.mode, f.size, f.fullDate, f.GetName())
 }
@@ -62,18 +64,22 @@ type allFiles struct {
 	fullInfo bool
 }
 
+// print func for allFiles struct
 func (f allFiles) String() string {
 	if !f.fullInfo {
 		return fmt.Sprintf("%s", f.files)
 	}
+
 	a := ""
 	for _, l := range f.files {
 		a += l.FullPrint() + "\n"
 	}
+
 	return a
 }
 
 func Programm(files []string, flag *flags.Flag) {
+	// run programm for all arguments
 	for _, l := range files {
 		run(l, flag)
 	}
@@ -85,16 +91,18 @@ func run(path string, flag *flags.Flag) {
 		log.Println(err)
 		return
 	}
+	// check if dir
 	fInfo, err := f.Stat()
 	if err != nil {
 		log.Println(err)
 		return
 	}
+	// if not dir, then run lsprog
 	if !fInfo.IsDir() {
 		lsprog([]fs.FileInfo{fInfo}, flag)
 		return
 	}
-
+	// if dir, then get all files in dir, and run lsprog
 	files, err := f.Readdir(0)
 	if err != nil {
 		log.Println(err)
@@ -145,8 +153,6 @@ func lsprog(files []fs.FileInfo, flag *flags.Flag) {
 		}
 
 		fileInfos.files = append(fileInfos.files, info)
-
-		// fmt.Println(v.Mode(), v.Size(), v.ModTime(), v.Name(), v.IsDir())
 	}
 
 	// l - if not l, get only needed info
