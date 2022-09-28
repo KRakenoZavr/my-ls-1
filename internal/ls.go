@@ -77,7 +77,6 @@ func Programm(files []string, flag *flags.Flag) {
 	for _, l := range files {
 		run(l, flag)
 	}
-
 }
 
 func run(path string, flag *flags.Flag) {
@@ -86,12 +85,26 @@ func run(path string, flag *flags.Flag) {
 		fmt.Println(err)
 		return
 	}
+	fInfo, err := f.Stat()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	if !fInfo.IsDir() {
+		lsprog([]fs.FileInfo{fInfo}, flag)
+		return
+	}
+
 	files, err := f.Readdir(0)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
+	lsprog(files, flag)
+}
+
+func lsprog(files []fs.FileInfo, flag *flags.Flag) {
 	sort.SliceStable(files, func(i, j int) bool {
 		return files[i].Name() < files[j].Name()
 	})
