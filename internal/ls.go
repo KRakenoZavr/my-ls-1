@@ -16,15 +16,19 @@ func Programm(files []string, flag *flags.Flag) {
 		lots = true
 	}
 
+	if flag.Contains("R") {
+		lots = true
+	}
+
 	sortedFiles := utils.SortFiles(files)
 
 	// run programm for all arguments
 	for i, l := range sortedFiles {
-		run(l, flag, lots, i == len(files)-1)
+		run(l, flag, lots, i == 0)
 	}
 }
 
-func run(path string, flag *flags.Flag, lots, isLast bool) {
+func run(path string, flag *flags.Flag, lots, isFirst bool) {
 	f, err := os.Open(path)
 	if err != nil {
 		log.Println(err)
@@ -39,7 +43,7 @@ func run(path string, flag *flags.Flag, lots, isLast bool) {
 	}
 	// if not dir, then run lsprog
 	if !fInfo.IsDir() {
-		lsprog([]fs.FileInfo{fInfo}, flag, lots, isLast)
+		lsprog([]fs.FileInfo{fInfo}, flag, lots, path)
 		return
 	}
 	// if dir, then get all files in dir, and run lsprog
@@ -49,15 +53,19 @@ func run(path string, flag *flags.Flag, lots, isLast bool) {
 		return
 	}
 
+	// print \n between multiple dirs
+	if lots && !isFirst {
+		fmt.Println()
+	}
 	// print which dir is it
 	if lots {
 		fmt.Printf("%s:\n", path)
 	}
 
-	lsprog(files, flag, lots, isLast)
+	lsprog(files, flag, lots, path)
 }
 
-func lsprog(files []fs.FileInfo, flag *flags.Flag, lots, isLast bool) {
+func lsprog(files []fs.FileInfo, flag *flags.Flag, lots bool, path string) {
 	sort.SliceStable(files, func(i, j int) bool {
 		return files[i].Name() < files[j].Name()
 	})
@@ -122,9 +130,13 @@ func lsprog(files []fs.FileInfo, flag *flags.Flag, lots, isLast bool) {
 
 	// print result
 	fmt.Print(fileInfos)
-	// print \n between multiple dirs
-	if lots && !isLast {
-		fmt.Println()
-	}
+
 	// R - recurse
+	if flag.Contains("R") {
+		for _, l := range fileInfos.files {
+			if l.isDir {
+				run(fmt.Sprintf("%s/%s", path, l.name), flag, true, false)
+			}
+		}
+	}
 }
