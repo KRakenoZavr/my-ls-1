@@ -34,7 +34,7 @@ type fileInfo struct {
 }
 
 func (f fileInfo) String() string {
-	return f.name
+	return f.GetName(false)
 }
 
 func (f fileInfo) SimplePrint() string {
@@ -42,9 +42,12 @@ func (f fileInfo) SimplePrint() string {
 }
 
 // for print file name and link
-func (f fileInfo) GetName() string {
+func (f fileInfo) GetName(fullInfo bool) string {
 	if f.isLink {
-		return fmt.Sprintf("%s %s %s -> %s %s %s", utils.Link, f.name, utils.Reset, utils.Dir, f.link, utils.Reset)
+		if fullInfo {
+			return fmt.Sprintf("%s %s %s -> %s %s %s", utils.Link, f.name, utils.Reset, utils.Dir, f.link, utils.Reset)
+		}
+		return fmt.Sprintf("%s %s %s", utils.Link, f.name, utils.Reset)
 	}
 
 	if f.isDir {
@@ -55,8 +58,8 @@ func (f fileInfo) GetName() string {
 }
 
 // print all info of file
-func (f fileInfo) FullPrint() string {
-	return fmt.Sprintf("%s %v %s %s", f.mode, f.size, f.fullDate, f.GetName())
+func (f fileInfo) FullPrint(fullInfo bool) string {
+	return fmt.Sprintf("%s %v %s %s", f.mode, f.size, f.fullDate, f.GetName(fullInfo))
 }
 
 type allFiles struct {
@@ -72,7 +75,7 @@ func (f allFiles) String() string {
 
 	a := ""
 	for _, l := range f.files {
-		a += l.FullPrint() + "\n"
+		a += l.FullPrint(f.fullInfo) + "\n"
 	}
 
 	return a
