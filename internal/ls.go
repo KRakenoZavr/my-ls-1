@@ -29,23 +29,25 @@ func Programm(files []string, flag *flags.Flag) {
 }
 
 func run(path string, flag *flags.Flag, lots, isFirst bool) {
+	// check if dir
+	fInfo, err := os.Lstat(path)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	// if not dir, then run lsprog
+	if !fInfo.IsDir() {
+		lsprog([]fs.FileInfo{fInfo}, flag, lots, path)
+		return
+	}
+
 	f, err := os.Open(path)
 	if err != nil {
 		log.Println(err)
 		return
 	}
 	defer f.Close()
-	// check if dir
-	fInfo, err := f.Stat()
-	if err != nil {
-		log.Println(err)
-		return
-	}
-	// if not dir, then run lsprog
-	if !fInfo.IsDir() {
-		lsprog([]fs.FileInfo{fInfo}, flag, lots, path)
-		return
-	}
 	// if dir, then get all files in dir, and run lsprog
 	files, err := f.Readdir(0)
 	if err != nil {
@@ -88,7 +90,7 @@ func lsprog(files []fs.FileInfo, flag *flags.Flag, lots bool, path string) {
 		// check of symlink
 		if v.Mode()&os.ModeSymlink == os.ModeSymlink {
 			// read link
-			linkName, err := os.Readlink(v.Name())
+			linkName, err := os.Readlink(utils.GetPathToLink(path, v.Name()))
 			if err != nil {
 				log.Println("error reading link:", err)
 			} else {

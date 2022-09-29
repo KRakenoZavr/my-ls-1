@@ -87,3 +87,17 @@ func SortFiles(args []string) []string {
 
 	return append(files, dirs...)
 }
+
+func GetPathToLink(path, filename string) string {
+	var linkPath string
+
+	if strings.HasSuffix(path, "/") {
+		linkPath = path + filename
+	} else if strings.HasSuffix(path, filename) {
+		linkPath = path
+	} else {
+		linkPath = path + "/" + filename
+	}
+
+	return linkPath
+}
