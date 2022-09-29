@@ -55,7 +55,7 @@ func (f fileInfo) GetName(fullInfo bool) string {
 
 // print all info of file
 func (f fileInfo) FullPrint(fullInfo bool) string {
-	return fmt.Sprintf("%s %v %s %s", f.mode, f.size, f.fullDate, f.GetName(fullInfo))
+	return fmt.Sprintf("%s %v %s %s %s %s", f.mode, f.size, f.ownerGroup, f.ownerName, f.fullDate, f.GetName(fullInfo))
 }
 
 type allFiles struct {
