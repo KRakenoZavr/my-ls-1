@@ -78,11 +78,17 @@ func SortFiles(args []string) []string {
 	}
 
 	sort.SliceStable(files, func(i, j int) bool {
-		return strings.ToLower(files[i]) < strings.ToLower(files[j])
+		file1 := strings.TrimPrefix(files[i], ".")
+		file2 := strings.TrimPrefix(files[j], ".")
+
+		return strings.ToLower(file1) < strings.ToLower(file2)
 	})
 
 	sort.SliceStable(dirs, func(i, j int) bool {
-		return strings.ToLower(dirs[i]) < strings.ToLower(dirs[j])
+		file1 := strings.TrimPrefix(dirs[i], ".")
+		file2 := strings.TrimPrefix(dirs[j], ".")
+
+		return strings.ToLower(file1) < strings.ToLower(file2)
 	})
 
 	return append(files, dirs...)

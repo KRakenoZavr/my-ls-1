@@ -75,7 +75,10 @@ func run(path string, flag *flags.Flag, lots, isFirst bool) {
 
 func lsprog(files []fs.FileInfo, flag *flags.Flag, lots, isDir bool, path string) {
 	sort.SliceStable(files, func(i, j int) bool {
-		return strings.ToLower(files[i].Name()) < strings.ToLower(files[j].Name())
+		file1 := strings.TrimPrefix(files[i].Name(), ".")
+		file2 := strings.TrimPrefix(files[j].Name(), ".")
+
+		return strings.ToLower(file1) < strings.ToLower(file2)
 	})
 
 	fileInfos := allFiles{
