@@ -7,19 +7,12 @@ import (
 	"time"
 )
 
-type fileDate struct {
-	month string
-	day   int
-	time  string
-}
-
 type fileInfo struct {
 	mode  fs.FileMode
 	size  int64
 	name  string
 	isDir bool
 
-	date     fileDate
 	fullDate time.Time
 
 	ownerGroup string
@@ -27,6 +20,10 @@ type fileInfo struct {
 
 	isLink bool
 	link   string
+}
+
+func (f fileInfo) formatMonth() string {
+	return fmt.Sprintf("%s %2v %02d:%02d", f.fullDate.Month().String()[:3], f.fullDate.Day(), f.fullDate.Hour(), f.fullDate.Minute())
 }
 
 func (f fileInfo) String() string {
@@ -55,7 +52,7 @@ func (f fileInfo) GetName(fullInfo bool) string {
 
 // print all info of file
 func (f fileInfo) FullPrint(fullInfo bool) string {
-	return fmt.Sprintf("%s %v %s %s %s %s", f.mode, f.size, f.ownerGroup, f.ownerName, f.fullDate, f.GetName(fullInfo))
+	return fmt.Sprintf("%s %s %s %4v %s %s", f.mode, f.ownerName, f.ownerGroup, f.size, f.formatMonth(), f.GetName(fullInfo))
 }
 
 type allFiles struct {
