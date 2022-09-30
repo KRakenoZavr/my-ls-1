@@ -8,6 +8,7 @@ import (
 	"ml/utils"
 	"os"
 	"sort"
+	"strings"
 )
 
 const (
@@ -74,7 +75,7 @@ func run(path string, flag *flags.Flag, lots, isFirst bool) {
 
 func lsprog(files []fs.FileInfo, flag *flags.Flag, lots, isDir bool, path string) {
 	sort.SliceStable(files, func(i, j int) bool {
-		return files[i].Name() < files[j].Name()
+		return strings.ToLower(files[i].Name()) < strings.ToLower(files[j].Name())
 	})
 
 	fileInfos := allFiles{

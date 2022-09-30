@@ -78,11 +78,11 @@ func SortFiles(args []string) []string {
 	}
 
 	sort.SliceStable(files, func(i, j int) bool {
-		return files[i] < files[j]
+		return strings.ToLower(files[i]) < strings.ToLower(files[j])
 	})
 
 	sort.SliceStable(dirs, func(i, j int) bool {
-		return dirs[i] < dirs[j]
+		return strings.ToLower(dirs[i]) < strings.ToLower(dirs[j])
 	})
 
 	return append(files, dirs...)
