@@ -8,7 +8,6 @@ import (
 	"ml/utils"
 	"os"
 	"sort"
-	"syscall"
 )
 
 const (
@@ -44,7 +43,7 @@ func run(path string, flag *flags.Flag, lots, isFirst bool) {
 
 	// if not dir, then run lsprog
 	if !fInfo.IsDir() {
-		lsprog([]fs.FileInfo{fInfo}, flag, lots, path)
+		lsprog([]fs.FileInfo{fInfo}, flag, lots, false, path)
 		return
 	}
 
@@ -70,63 +69,41 @@ func run(path string, flag *flags.Flag, lots, isFirst bool) {
 		fmt.Printf("%s:\n", path)
 	}
 
-	lsprog(files, flag, lots, path)
+	lsprog(files, flag, lots, true, path)
 }
 
-func lsprog(files []fs.FileInfo, flag *flags.Flag, lots bool, path string) {
+func lsprog(files []fs.FileInfo, flag *flags.Flag, lots, isDir bool, path string) {
 	sort.SliceStable(files, func(i, j int) bool {
 		return files[i].Name() < files[j].Name()
 	})
 
 	fileInfos := allFiles{
-		files:    []fileInfo{},
+		files:    []*fileInfo{},
 		fullInfo: true,
+		isDir:    isDir,
+		path:     path,
 	}
 
 	for _, v := range files {
-		info := fileInfo{
+		info := &fileInfo{
 			mode:     v.Mode(),
 			size:     v.Size(),
 			name:     v.Name(),
 			isDir:    v.IsDir(),
 			fullDate: v.ModTime(),
 			isLink:   false,
-
-			blocks: 0,
+			fullPath: utils.GetPathToLink(path, v.Name()),
+			blocks:   0,
 		}
-
-		fullPathToFile := utils.GetPathToLink(path, v.Name())
 
 		// blocks
 		if flag.Contains("l") {
-			var fileStats syscall.Stat_t
-			err := syscall.Lstat(fullPathToFile, &fileStats)
-			if err != nil {
-				log.Println(err)
-			} else {
-				info.blocks = fileStats.Blocks * physicalBlockSize / lsBlockSize
-			}
+			info.AddBlocks()
 		}
 
 		// check of symlink
-		if v.Mode()&os.ModeSymlink == os.ModeSymlink {
-			// read link
-			linkName, err := os.Readlink(fullPathToFile)
-			if err != nil {
-				log.Println("error reading link:", err)
-			} else {
-				info.link = linkName
-				info.isLink = true
-			}
-		}
-
-		name1, name2, err := utils.GetOwnerFile(v)
-		if err != nil {
-			log.Println("error getting owner:", err)
-		} else {
-			info.ownerGroup = name1
-			info.ownerName = name2
-		}
+		info.Symlink()
+		info.FileOwner(v)
 
 		fileInfos.files = append(fileInfos.files, info)
 	}
@@ -139,6 +116,8 @@ func lsprog(files []fs.FileInfo, flag *flags.Flag, lots bool, path string) {
 	// a - if not a, filter .
 	if !flag.Contains("a") {
 		fileInfos.files = RemoveDotFiles(fileInfos.files)
+	} else {
+		fileInfos.dotDirs()
 	}
 
 	// t - sort by time
