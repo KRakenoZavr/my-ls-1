@@ -20,6 +20,8 @@ type fileInfo struct {
 
 	isLink bool
 	link   string
+
+	blocks int64
 }
 
 func (f fileInfo) getMonthAsString() string {

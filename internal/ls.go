@@ -8,6 +8,12 @@ import (
 	"ml/utils"
 	"os"
 	"sort"
+	"syscall"
+)
+
+const (
+	physicalBlockSize = 512
+	lsBlockSize       = 1024
 )
 
 func Programm(files []string, flag *flags.Flag) {
@@ -85,12 +91,27 @@ func lsprog(files []fs.FileInfo, flag *flags.Flag, lots bool, path string) {
 			isDir:    v.IsDir(),
 			fullDate: v.ModTime(),
 			isLink:   false,
+
+			blocks: 0,
+		}
+
+		fullPathToFile := utils.GetPathToLink(path, v.Name())
+
+		// blocks
+		if flag.Contains("l") {
+			var fileStats syscall.Stat_t
+			err := syscall.Lstat(fullPathToFile, &fileStats)
+			if err != nil {
+				log.Println(err)
+			} else {
+				info.blocks = fileStats.Blocks * physicalBlockSize / lsBlockSize
+			}
 		}
 
 		// check of symlink
 		if v.Mode()&os.ModeSymlink == os.ModeSymlink {
 			// read link
-			linkName, err := os.Readlink(utils.GetPathToLink(path, v.Name()))
+			linkName, err := os.Readlink(fullPathToFile)
 			if err != nil {
 				log.Println("error reading link:", err)
 			} else {
