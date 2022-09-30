@@ -22,8 +22,12 @@ type fileInfo struct {
 	link   string
 }
 
+func (f fileInfo) getMonthAsString() string {
+	return f.fullDate.Month().String()[:3]
+}
+
 func (f fileInfo) formatMonth() string {
-	return fmt.Sprintf("%s %2v %02d:%02d", f.fullDate.Month().String()[:3], f.fullDate.Day(), f.fullDate.Hour(), f.fullDate.Minute())
+	return fmt.Sprintf("%s %2v %02d:%02d", f.getMonthAsString(), f.fullDate.Day(), f.fullDate.Hour(), f.fullDate.Minute())
 }
 
 func (f fileInfo) String() string {
