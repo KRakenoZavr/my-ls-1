@@ -136,7 +136,7 @@ func lsprog(files []fs.FileInfo, flag *flags.Flag, lots, isDir bool, path string
 	// R - recurse
 	if flag.Contains("R") {
 		for _, l := range fileInfos.files {
-			if l.isDir {
+			if l.isDir && l.name != "." && l.name != ".." {
 				run(fmt.Sprintf("%s/%s", path, l.name), flag, true, false)
 			}
 		}

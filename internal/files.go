@@ -193,7 +193,7 @@ func (f *allFiles) curDir() {
 	info := &fileInfo{
 		mode:     v.Mode(),
 		size:     v.Size(),
-		name:     v.Name(),
+		name:     ".",
 		isDir:    v.IsDir(),
 		fullDate: v.ModTime(),
 		isLink:   false,
