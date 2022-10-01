@@ -4,10 +4,12 @@ import (
 	"fmt"
 	"io/fs"
 	"log"
-	"ml/utils"
+	"math"
 	"os"
 	"syscall"
 	"time"
+
+	"ml/utils"
 )
 
 type fileInfo struct {
@@ -74,7 +76,7 @@ func (f *fileInfo) AddBlocks() {
 	if err != nil {
 		log.Println(err)
 	} else {
-		f.blocks = fileStats.Blocks * physicalBlockSize / lsBlockSize
+		f.blocks = fileStats.Blocks
 	}
 }
 
@@ -148,7 +150,7 @@ func (f allFiles) totalBlocks() (c int64) {
 		c += l.blocks
 	}
 
-	return
+	return int64(math.Round(float64(c) * physicalBlockSize / lsBlockSize))
 }
 
 func (f allFiles) hardLink() {
