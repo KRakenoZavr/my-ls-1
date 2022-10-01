@@ -66,6 +66,7 @@ func (f fileInfo) GetName(fullInfo bool) string {
 
 // print all info of file
 func (f fileInfo) FullPrint(fullInfo bool) string {
+	// TODO check len then use %2v for all
 	return fmt.Sprintf("%s %2v %s %s %4v %s %s", f.mode, f.hardLinks, f.ownerName, f.ownerGroup, f.size, f.formatMonth(), f.GetName(fullInfo))
 }
 

@@ -4,11 +4,12 @@ import (
 	"fmt"
 	"io/fs"
 	"log"
-	"ml/flags"
-	"ml/utils"
 	"os"
 	"sort"
 	"strings"
+
+	"ml/flags"
+	"ml/utils"
 )
 
 const (
@@ -74,6 +75,7 @@ func run(path string, flag *flags.Flag, lots, isFirst bool) {
 }
 
 func lsprog(files []fs.FileInfo, flag *flags.Flag, lots, isDir bool, path string) {
+	// TODO sort not including not alphabet chars
 	sort.SliceStable(files, func(i, j int) bool {
 		file1 := strings.TrimPrefix(files[i].Name(), ".")
 		file2 := strings.TrimPrefix(files[j].Name(), ".")
