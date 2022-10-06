@@ -124,8 +124,8 @@ func (f allFiles) getInfo() string {
 
 func (f allFiles) getFullInfo() string {
 	a := ""
+	f.hardLink()
 	if f.isDir {
-		f.hardLink()
 		a = fmt.Sprintf("total %v\n", f.totalBlocks())
 	}
 
