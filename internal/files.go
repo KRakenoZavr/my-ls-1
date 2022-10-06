@@ -65,9 +65,8 @@ func (f fileInfo) GetName(fullInfo bool) string {
 }
 
 // print all info of file
-func (f fileInfo) FullPrint(fullInfo bool) string {
-	// TODO check len then use %2v for all
-	return fmt.Sprintf("%s %2v %s %s %4v %s %s", f.mode, f.hardLinks, f.ownerName, f.ownerGroup, f.size, f.formatMonth(), f.GetName(fullInfo))
+func (f fileInfo) FullPrint(fullInfo bool, maxHL, maxSize int) string {
+	return fmt.Sprintf("%s %*v %s %s %*v %s %s", f.mode, maxHL, f.hardLinks, f.ownerName, f.ownerGroup, maxSize, f.size, f.formatMonth(), f.GetName(fullInfo))
 }
 
 // add block info
@@ -129,8 +128,22 @@ func (f allFiles) getFullInfo() string {
 		a = fmt.Sprintf("total %v\n", f.totalBlocks())
 	}
 
+	maxHL := 0
+	maxSize := 0
 	for _, l := range f.files {
-		a += l.FullPrint(f.fullInfo) + "\n"
+		lenHL := len(fmt.Sprintf("%v", l.hardLinks))
+		if maxHL < lenHL {
+			maxHL = lenHL
+		}
+
+		lenSize := len(fmt.Sprintf("%v", l.size))
+		if maxSize < lenSize {
+			maxSize = lenSize
+		}
+	}
+
+	for _, l := range f.files {
+		a += l.FullPrint(f.fullInfo, maxHL, maxSize) + "\n"
 	}
 
 	return a
