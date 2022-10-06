@@ -5,6 +5,7 @@ import (
 	"io/fs"
 	"log"
 	"os"
+	"regexp"
 	"sort"
 	"strings"
 
@@ -75,10 +76,11 @@ func run(path string, flag *flags.Flag, lots, isFirst bool) {
 }
 
 func lsprog(files []fs.FileInfo, flag *flags.Flag, lots, isDir bool, path string) {
-	// TODO sort not including not alphabet chars
+	reg := regexp.MustCompile(`[^a-zA-Z0-9]`)
+
 	sort.SliceStable(files, func(i, j int) bool {
-		file1 := strings.TrimPrefix(files[i].Name(), ".")
-		file2 := strings.TrimPrefix(files[j].Name(), ".")
+		file1 := reg.ReplaceAllString(files[i].Name(), "")
+		file2 := reg.ReplaceAllString(files[j].Name(), "")
 
 		return strings.ToLower(file1) < strings.ToLower(file2)
 	})
