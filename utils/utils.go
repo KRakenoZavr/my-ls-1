@@ -15,7 +15,7 @@ import (
 // TODO check flags?
 func GetArgs(args []string) (flags []string, files []string) {
 	for _, l := range args {
-		if strings.HasPrefix(l, "-") {
+		if strings.HasPrefix(l, "-") && len(l) > 1 {
 			flags = append(flags, l)
 		} else {
 			files = append(files, l)
