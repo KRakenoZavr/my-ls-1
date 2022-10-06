@@ -65,8 +65,8 @@ func (f fileInfo) GetName(fullInfo bool) string {
 }
 
 // print all info of file
-func (f fileInfo) FullPrint(fullInfo bool, maxHL, maxSize int) string {
-	return fmt.Sprintf("%s %*v %s %s %*v %s %s", f.mode, maxHL, f.hardLinks, f.ownerName, f.ownerGroup, maxSize, f.size, f.formatMonth(), f.GetName(fullInfo))
+func (f fileInfo) FullPrint(fullInfo bool, maxHL, maxSize, maxOG, maxOU int) string {
+	return fmt.Sprintf("%s %*v %-*s %-*s %*v %s %s", f.mode, maxHL, f.hardLinks, maxOU, f.ownerName, maxOG, f.ownerGroup, maxSize, f.size, f.formatMonth(), f.GetName(fullInfo))
 }
 
 // add block info
@@ -130,6 +130,8 @@ func (f allFiles) getFullInfo() string {
 
 	maxHL := 0
 	maxSize := 0
+	maxOG := 0
+	maxOU := 0
 	for _, l := range f.files {
 		lenHL := len(fmt.Sprintf("%v", l.hardLinks))
 		if maxHL < lenHL {
@@ -140,10 +142,20 @@ func (f allFiles) getFullInfo() string {
 		if maxSize < lenSize {
 			maxSize = lenSize
 		}
+
+		lenOG := len(l.ownerGroup)
+		if maxOG < lenOG {
+			maxOG = lenOG
+		}
+
+		lenOU := len(l.ownerName)
+		if maxOU < lenOU {
+			maxOU = lenOU
+		}
 	}
 
 	for _, l := range f.files {
-		a += l.FullPrint(f.fullInfo, maxHL, maxSize) + "\n"
+		a += l.FullPrint(f.fullInfo, maxHL, maxSize, maxOG, maxOU) + "\n"
 	}
 
 	return a
